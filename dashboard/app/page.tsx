@@ -1,7 +1,8 @@
 import { getState } from "@/lib/blob";
+import PipelineStatus from "@/components/PipelineStatus";
 
 type DashboardState = {
-  pipeline: { status: string; workflow: string; updatedAt: string } | null;
+  pipeline: { status: string; workflow: string; runId: number; updatedAt: string } | null;
   drift: { driftDetected: boolean; changedResources: any[]; lastChecked: string } | null;
   cost: { currentMonthSpend: number; trend: string; lastChecked: string } | null;
 };
@@ -19,13 +20,14 @@ export default async function Page() {
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Terraform Landing Zone Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white p-4 rounded shadow border">
-          <h2 className="font-semibold mb-2">Pipeline</h2>
-          <p className="text-sm text-gray-600">
-            {state.pipeline ? state.pipeline.status : "no data"}
-          </p>
-          <p className="text-xs text-gray-500">{state.pipeline?.updatedAt ?? "—"}</p>
-        </div>
+        <PipelineStatus
+          run={{
+            status: state.pipeline?.status ?? "unknown",
+            workflow: state.pipeline?.workflow ?? "—",
+            runId: state.pipeline?.runId ?? 0,
+            updatedAt: state.pipeline?.updatedAt ?? "—",
+          }}
+        />
         <div className="bg-white p-4 rounded shadow border">
           <h2 className="font-semibold mb-2">Drift</h2>
           <p className="text-sm text-gray-600">
