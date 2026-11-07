@@ -4,25 +4,37 @@ export type PollState<T> = {
   lastUpdated: string | null;
 };
 
-export function startPoll<T>(
+export async function startPoll<T>(
   intervalMs: number,
   fetchFn: () => Promise<T>,
   onUpdate: (state: PollState<T>) => void
-): () => void {
-  let timer: NodeJS.Timeout | null = null;
-
-  async function tick() {
+): Promise<PollState<T>> {
+  async function tick(): Promise<PollState<T>> {
     try {
       const data = await fetchFn();
-      onUpdate({ data, stale: false, lastUpdated: new Date().toISOString() });
+      const state: PollState<T> = {
+        data,
+        stale: false,
+        lastUpdated: new Date().toISOString(),
+      };
+      onUpdate(state);
+      return state;
     } catch {
-      onUpdate({ data: null, stale: true, lastUpdated: null });
+      const state: PollState<T> = {
+        data: null,
+        stale: true,
+        lastUpdated: null,
+      };
+      onUpdate(state);
+      return state;
     }
   }
 
-  tick();
-  timer = setInterval(tick, intervalMs);
-  return () => {
-    if (timer) clearInterval(timer);
-  };
+  const result = await tick();
+
+  setInterval(() => {
+    void tick();
+  }, intervalMs);
+
+  return result;
 }
