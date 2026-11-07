@@ -1,5 +1,6 @@
 import { getState } from "@/lib/blob";
 import PipelineStatus from "@/components/PipelineStatus";
+import DriftStatus from "@/components/DriftStatus";
 
 type DashboardState = {
   pipeline: { status: string; workflow: string; runId: number; updatedAt: string } | null;
@@ -28,13 +29,13 @@ export default async function Page() {
             updatedAt: state.pipeline?.updatedAt ?? "—",
           }}
         />
-        <div className="bg-white p-4 rounded shadow border">
-          <h2 className="font-semibold mb-2">Drift</h2>
-          <p className="text-sm text-gray-600">
-            {state.drift ? (state.drift.driftDetected ? "drift detected" : "no drift") : "no data"}
-          </p>
-          <p className="text-xs text-gray-500">{state.drift?.lastChecked ?? "—"}</p>
-        </div>
+        <DriftStatus
+          drift={{
+            driftDetected: state.drift?.driftDetected ?? false,
+            changedResources: state.drift?.changedResources ?? [],
+            lastChecked: state.drift?.lastChecked ?? "—",
+          }}
+        />
         <div className="bg-white p-4 rounded shadow border">
           <h2 className="font-semibold mb-2">Cost</h2>
           <p className="text-sm text-gray-600">
