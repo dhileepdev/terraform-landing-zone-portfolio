@@ -1,9 +1,15 @@
-# Example Terraform backend configuration.
-# Copy to backend.hcl and fill in your bucket/table names before running
-# terraform init. Never commit real credentials or state file paths here.
+# Terraform backend configuration — local (Floci)
 
-bucket         = "your-terraform-state-bucket"
+# For local development/demo against the Floci AWS emulator.
+# Start Floci: floci start   (AWS emulator on http://localhost:4566)
+# Create the bucket once: aws --endpoint-url http://localhost:4566 s3 mb s3://portfolio-terraform-state
+# Then copy this file to backend.hcl and run terraform init.
+
+bucket         = "portfolio-terraform-state"
 key            = "terraform-landing-zone/terraform.tfstate"
 region         = "ap-southeast-2"
-dynamodb_table = "your-terraform-lock-table"
-encrypt        = true
+endpoint       = "http://localhost:4566"
+skip_credentials_validation = true
+skip_metadata_api_check     = true
+skip_requesting_account_id  = true
+dynamodb_table = ""          # DynamoDB locking skipped — single-user portfolio demo
