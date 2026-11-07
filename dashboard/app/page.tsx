@@ -19,7 +19,7 @@ export default function Page() {
   const [state, setState] = useState<DashboardState>(EMPTY);
   const [stale, setStale] = useState(false);
   const [fresh, setFresh] = useState<string | null>(null);
-  const runFetch = useRef<() => void>();
+  const runFetch = useRef<(() => void) | undefined>(undefined);
 
   useEffect(() => {
     let mounted = true;

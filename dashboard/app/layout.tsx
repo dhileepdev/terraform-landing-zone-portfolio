@@ -9,12 +9,12 @@ export const metadata = {
   description: "CI/CD pipeline runs, infrastructure drift detection, and cloud cost",
 };
 
-const SidebarItem = ({ active, label, href }: { active?: boolean; label: string; href: string }) => (
+const SidebarItem = ({ active, children, href }: { active?: boolean; children: React.ReactNode; href: string }) => (
   <a
     href={href}
     className={`sidebar-item ${active ? "active" : ""}`}
   >
-    {label}
+    {children}
   </a>
 );
 
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <SidebarItem href="/cost">Cost</SidebarItem>
           </nav>
           <div className="sidebar-utils">
-            <SidebarItem label="Settings" href="/settings" />
+            <SidebarItem href="/settings">Settings</SidebarItem>
           </div>
         </aside>
         <main className="shell-content">{children}</main>
