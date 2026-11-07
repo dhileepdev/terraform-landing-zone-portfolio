@@ -1,0 +1,9 @@
+# Example Terraform backend configuration.
+# Copy to backend.hcl and fill in your bucket/table names before running
+# terraform init. Never commit real credentials or state file paths here.
+
+bucket         = "your-terraform-state-bucket"
+key            = "terraform-landing-zone/terraform.tfstate"
+region         = "ap-southeast-2"
+dynamodb_table = "your-terraform-lock-table"
+encrypt        = true
