@@ -6,17 +6,18 @@ type DriftStatus = {
 
 export default function DriftStatus({ drift }: { drift: DriftStatus }) {
   return (
-    <div className="bg-white p-4 rounded shadow border">
-      <h2 className="font-semibold mb-2">Drift</h2>
-      <p className={`text-sm font-medium ${
-        drift.driftDetected ? "text-red-600 bg-red-50" : "text-green-600 bg-green-50"
-      }`}>
+    <div className="space-y-3">
+      <span className={`status-chip ${drift.driftDetected ? "chip-bad" : "chip-ok"}`}>
         {drift.driftDetected ? "drift detected" : "no drift"}
-      </p>
-      <p className="text-xs text-gray-500">
-        {drift.changedResources.length} changed
-      </p>
-      <p className="text-xs text-gray-500">{drift.lastChecked}</p>
+      </span>
+      <div className="flex items-baseline gap-2">
+        <span className="num text-xl font-600">{drift.changedResources.length}</span>
+        <span className="muted text-[12px]">changed resources</span>
+      </div>
+      <div className="flex items-baseline gap-2 mt-2">
+        <span className="muted text-[11px]">Checked:</span>
+        <span className="num text-[12px]">{drift.lastChecked}</span>
+      </div>
     </div>
   );
 }
