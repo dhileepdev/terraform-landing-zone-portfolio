@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": ".next",
-  "routes": [
-    { "src": "/(.*)", "dest": "dashboard/$1" }
-  ]
+  "framework": "nextjs",
+  "outputDirectory": ".next"
 }
