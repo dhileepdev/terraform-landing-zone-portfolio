@@ -11,3 +11,5 @@ out/
 *.log
 test-results/
 playwright-report/
+.vercel
+.env*
