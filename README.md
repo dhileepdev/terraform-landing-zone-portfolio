@@ -47,6 +47,14 @@ dashboard/          # Next.js dashboard (App Router, Tailwind v4)
     poll.ts         # startPoll: 30s polling with stale fallback
   e2e/
     smoke.test.ts   # Playwright: all three cards render
+services/
+  state-graph/        # Go backend: runs Floci, serves the state as a graph
+    go.mod
+    main.go
+    internal/
+      state/          # state v4 parsing + BuildGraph
+      stateclient/    # path-style S3 GET from Floci
+      floci/          # floci start supervision
 docs/
   STATE_BACKEND.md  # S3 + DynamoDB state backend (Floci local)
 ```
@@ -86,6 +94,43 @@ npm run dev                  # http://localhost:3000
 npm run build                # production build
 npm test                     # vitest unit tests (4 test files)
 ```
+
+## State graph backend
+
+`services/state-graph/` is a Go microservice that runs Floci as a
+microservice, connects to it via the S3-compatible endpoint, and serves the
+Terraform state as a graph. It starts Floci itself when it is not reachable
+and stops it cleanly on SIGTERM/SIGINT.
+
+Endpoints (all `GET`):
+
+| Path | Response |
+|------|----------|
+| `/health` or `/api/health` | `{status, floci:{endpoint, reachable}, stateFound, state}` — `state` is `{serial, terraformVersion}` when a state object is stored |
+| `/api/state` | the raw state document from Floci (404 `terraform state not found in Floci (s3://…) — run terraform apply against Floci first` when none) |
+| `/api/state/graph` | `{nodes, edges, outputs, summary}` — resources as nodes, `instances[].dependencies` as `kind: "dependencies"` edges |
+| `/api/state/resources` | `{resources}` — the graph's node list |
+| `/api/state/outputs` | `{outputs}` — the graph's output list |
+| `/api/state/summary` | `{summary}` — version, serial, lineage, managed/data counts, node/edge counts, `byType` |
+| `/` | showcase page listing resources and outputs |
+
+Environment variables:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `PORT` | `8080` | listen port |
+| `FLOCI_ENDPOINT` | `http://localhost:4566` | Floci S3-compatible endpoint |
+| `STATE_BUCKET` | `portfolio-terraform-state` | state bucket (path-style GET `s3://bucket/key`) |
+| `STATE_KEY` | `terraform-landing-zone/terraform.tfstate` | state key |
+
+Run it with the defaults from `terraform/backend.hcl.example`:
+
+```bash
+cd services/state-graph
+go run .          # or: go build -o state-graph . && ./state-graph
+```
+
+Unit tests: `go test ./...` from `services/state-graph/`.
 
 ## Deploy to Vercel
 
