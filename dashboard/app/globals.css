@@ -1,5 +1,58 @@
 @import "tailwindcss";
 
+/* Visually hidden utility: hidden from screen but accessible to assistive tech */
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.visually-hidden:focus-visible {
+  position: static !important;
+  clip-path: none !important;
+  overflow: visible !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: normal !important;
+  background: transparent;
+}
+
+/* Skip link styling */
+.skip-link {
+  position: absolute;
+  top: -1000px; left: auto;
+  width: 1px; height: 1px; overflow: hidden;
+  padding: 0; margin: -1px;
+}
+
+.skip-link:focus-visible {
+  top: 0; left: 0;
+  width: auto; height: auto;
+  padding: 8px 16px;
+  background: var(--text);
+  color: var(--surface);
+  z-index: 100;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 :root {
   --ground: #f8f8f8;
   --surface: #ffffff;
@@ -40,6 +93,13 @@ h2 { font-size: var(--fs-section); font-weight: 600; }
 p { margin: 0 0 0.5em 0; color: var(--muted); font-size: var(--fs-body); }
 a { color: var(--accent); }
 a:hover { text-decoration: underline; }
+
+/* Focus-visible styles for keyboard navigation */
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 button { font: inherit; cursor: pointer; }
 table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
 th { text-align: left; font-weight: 500; color: var(--muted); font-size: 11px; padding-bottom: 8px; letter-spacing: normal; text-transform: none; }
@@ -97,3 +157,15 @@ td { padding: 6px 0; color: var(--text); border-bottom: 1px var(--rule) solid; }
 .change { font-size: var(--fs-small); font-weight: 600; font-family: var(--font-geist-mono), ui-monospace, monospace; }
 .change-negative { color: var(--negative); }
 .change-positive { color: var(--positive); }
+
+/* Trends page: staggered timeline fade + chart grid/axis */
+@keyframes tl-fade {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tl-fade {
+  opacity: 0;
+  animation: tl-fade 0.42s ease forwards;
+}
+.trend-grid { stroke: var(--rule); }
+.trend-axis { fill: var(--muted); }
